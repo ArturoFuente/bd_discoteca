@@ -132,8 +132,6 @@ public class logueo extends javax.swing.JFrame {
 
     private boolean verificarCredenciales(String usuario, String contrasena) {
         // Lógica para verificar las credenciales en la base de datos de empleados
-        // Aquí deberías realizar una consulta a la base de datos para verificar las credenciales
-        // por ejemplo, podrías usar JDBC para conectarte a la base de datos y ejecutar una consulta SQL
         // Aquí se debe reemplazar esta lógica con la que se adapte a tu sistema de base de datos y estructura de empleados
         // Suponiendo que tienes una tabla llamada "empleados" con columnas "nombre_usuario" y "contrasena"
         String jdbcUrl = "jdbc:mysql://localhost:3306/bd_discoteca";

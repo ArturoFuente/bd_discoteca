@@ -1,3 +1,4 @@
+package app;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -59,7 +60,7 @@ public class Empleado extends JFrame implements ActionListener {
         add(txtFechaContratacion);
         add(createLabel("\uD83D\uDC68\u200D\uD83D\uDCBC Nombre_usuario:"));
         add(txtNombreUsuario);
-        add(createLabel("\uD83D\uDD12 Contrasena:"));
+        add(createLabel("\uD83D\uDD12 Contraseña:"));
         add(txtContrasena);
         add(btnGuardar);
         add(btnCerrar);

@@ -1,3 +1,4 @@
+package app;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -5,16 +6,18 @@ import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class Evento extends JFrame implements ActionListener {
+public class Inventario extends JFrame implements ActionListener {
 
-    private JTextField txtId, txtNombre, txtFechaHora, txtDescripcion, txtArtistasDJ, txtCapacidadMaxima, txtPrecioEntrada, txtEstado;
+    private JTextField txtIdInventario, txtFechaRegistro;
+    private JComboBox<String> cbProductos;
     private JButton btnGuardar, btnCerrar;
 
-    public Evento() {
+    public Inventario() {
         // Configuración de la ventana
-        setTitle("\uD83C\uDFB6 Evento");  // Emoji para el icono de evento
+        setTitle("\uD83D\uDCC2 Inventario");  // Emoji para el icono de inventario
         setSize(600, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setIconImage(new ImageIcon("icono.png").getImage());  // Reemplaza "icono.png" con la ruta de tu ícono
@@ -23,17 +26,12 @@ public class Evento extends JFrame implements ActionListener {
         getContentPane().setBackground(new Color(12, 171, 168));
 
         // Crear componentes
-        txtId = new JTextField(10);
-        txtNombre = new JTextField(20);
-        txtFechaHora = new JTextField(20);
-        txtDescripcion = new JTextField(20);
-        txtArtistasDJ = new JTextField(20);
-        txtCapacidadMaxima = new JTextField(10);
-        txtPrecioEntrada = new JTextField(10);
-        txtEstado = new JTextField(20);
+        txtIdInventario = new JTextField(10);
+        txtFechaRegistro = new JTextField(20);
+        cbProductos = new JComboBox<>();
 
-        btnGuardar = new JButton("Guardar");
-        btnCerrar = new JButton("Cerrar");
+        btnGuardar = new JButton("\uD83D\uDCBE Guardar");  // Emoji para el icono de disco
+        btnCerrar = new JButton("\uD83D\uDD34 Cerrar");    // Emoji para el icono de cerrar
 
         // Estilo de los botones
         btnGuardar.setBackground(new Color(36, 138, 61)); // Verde
@@ -49,37 +47,21 @@ public class Evento extends JFrame implements ActionListener {
         btnCerrar.addActionListener(this);
 
         // Configurar el diseño de la interfaz
-        setLayout(new GridLayout(9, 2));
-        add(createLabel("\uD83C\uDFB6 ID_evento:"));
-        add(txtId);
-        add(createLabel("\uD83D\uDCDD Nombre_evento:"));
-        add(txtNombre);
-        add(createLabel("\uD83D\uDD56 Fecha_hora_evento (AAAA-MM-DD HH:MM:SS):"));
-        add(txtFechaHora);
-        add(createLabel("\uD83D\uDCDD Descripcion_evento:"));
-        add(txtDescripcion);
-        add(createLabel("\uD83D\uDD0E Artistas_DJ_invitados:"));
-        add(txtArtistasDJ);
-        add(createLabel("\uD83D\uDCB0 Capacidad_maxima_evento:"));
-        add(txtCapacidadMaxima);
-        add(createLabel("\uD83D\uDCB5 Precio_entrada:"));
-        add(txtPrecioEntrada);
-        add(createLabel("\uD83D\uDD0E Estado_evento:"));
-        add(txtEstado);
+        setLayout(new GridLayout(4, 2));
+        add(createLabel("\uD83D\uDCC2 ID_inventario:"));
+        add(txtIdInventario);
+        add(createLabel("\uD83C\uDF4E Producto:"));
+        add(cbProductos);
+        add(createLabel("\uD83D\uDDD3 Fecha_registro (AAAA-MM-DD):"));
+        add(txtFechaRegistro);
         add(btnGuardar);
         add(btnCerrar);
+
+        cargarProductos();
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == btnGuardar) {
-            guardarEvento();
-        } else if (e.getSource() == btnCerrar) {
-            cerrarVentana();
-        }
-    }
-
-    private void guardarEvento() {
+    private void cargarProductos() {
+        // Lógica para cargar datos de productos desde la base de datos
         String jdbcUrl = "jdbc:mysql://localhost:3306/bd_discoteca";
         String usuario = "root";
         String contraseña = "";
@@ -88,25 +70,61 @@ public class Evento extends JFrame implements ActionListener {
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection conexion = DriverManager.getConnection(jdbcUrl, usuario, contraseña);
 
-            String consulta = "INSERT INTO Eventos (ID_evento, Nombre_evento, Fecha_hora_evento, Descripcion_evento, Artistas_DJ_invitados, Capacidad_maxima_evento, Precio_entrada, Estado_evento) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            String consulta = "SELECT ID_producto, Nombre_producto FROM Productos";
+            PreparedStatement statement = conexion.prepareStatement(consulta);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                int idProducto = resultSet.getInt("ID_producto");
+                String nombreProducto = resultSet.getString("Nombre_producto");
+                cbProductos.addItem(idProducto + " - " + nombreProducto);
+            }
+
+            resultSet.close();
+            statement.close();
+            conexion.close();
+
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == btnGuardar) {
+            guardarInventario();
+        } else if (e.getSource() == btnCerrar) {
+            cerrarVentana();
+        }
+    }
+
+    private void guardarInventario() {
+        String jdbcUrl = "jdbc:mysql://localhost:3306/bd_discoteca";
+        String usuario = "root";
+        String contraseña = "";
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection conexion = DriverManager.getConnection(jdbcUrl, usuario, contraseña);
+
+            String consulta = "INSERT INTO Inventario (ID_inventario, ID_producto, Fecha_registro) " +
+                    "VALUES (?, ?, ?)";
 
             PreparedStatement statement = conexion.prepareStatement(consulta);
-            statement.setInt(1, Integer.parseInt(txtId.getText()));
-            statement.setString(2, txtNombre.getText());
-            statement.setString(3, txtFechaHora.getText());
-            statement.setString(4, txtDescripcion.getText());
-            statement.setString(5, txtArtistasDJ.getText());
-            statement.setInt(6, Integer.parseInt(txtCapacidadMaxima.getText()));
-            statement.setBigDecimal(7, new java.math.BigDecimal(txtPrecioEntrada.getText()));
-            statement.setString(8, txtEstado.getText());
+            statement.setInt(1, Integer.parseInt(txtIdInventario.getText()));
+
+            // Obtener el ID del producto seleccionado
+            int idProducto = Integer.parseInt(cbProductos.getSelectedItem().toString().split(" - ")[0]);
+            statement.setInt(2, idProducto);
+
+            statement.setString(3, txtFechaRegistro.getText());
 
             int filasAfectadas = statement.executeUpdate();
 
             if (filasAfectadas > 0) {
                 JOptionPane.showMessageDialog(this, "Inserción exitosa");
             } else {
-                JOptionPane.showMessageDialog(this, "No se pudo insertar el evento");
+                JOptionPane.showMessageDialog(this, "No se pudo insertar en el inventario");
             }
 
             statement.close();
@@ -118,7 +136,7 @@ public class Evento extends JFrame implements ActionListener {
     }
 
     private void cerrarVentana() {
-        // Cierra la interfaz actual (Evento)
+        // Cierra la interfaz actual (Inventario)
         this.dispose();
     }
 
@@ -140,8 +158,8 @@ public class Evento extends JFrame implements ActionListener {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            Evento interfazEvento = new Evento();
-            interfazEvento.setVisible(true);
+            Inventario interfazInventario = new Inventario();
+            interfazInventario.setVisible(true);
         });
     }
 }

@@ -1,3 +1,4 @@
+package app;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -7,14 +8,14 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class Proveedores extends JFrame implements ActionListener {
+public class Evento extends JFrame implements ActionListener {
 
-    private JTextField txtIdProveedor, txtNombreProveedor, txtDireccion, txtNumTelefonoContacto;
+    private JTextField txtId, txtNombre, txtFechaHora, txtDescripcion, txtArtistasDJ, txtCapacidadMaxima, txtPrecioEntrada, txtEstado;
     private JButton btnGuardar, btnCerrar;
 
-    public Proveedores() {
+    public Evento() {
         // Configuración de la ventana
-        setTitle("\uD83D\uDC64 Proveedores");  // Emoji para el icono de proveedores
+        setTitle("\uD83C\uDFB6 Evento");  // Emoji para el icono de evento
         setSize(600, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setIconImage(new ImageIcon("icono.png").getImage());  // Reemplaza "icono.png" con la ruta de tu ícono
@@ -23,13 +24,17 @@ public class Proveedores extends JFrame implements ActionListener {
         getContentPane().setBackground(new Color(12, 171, 168));
 
         // Crear componentes
-        txtIdProveedor = new JTextField(10);
-        txtNombreProveedor = new JTextField(20);
-        txtDireccion = new JTextField(20);
-        txtNumTelefonoContacto = new JTextField(15);
+        txtId = new JTextField(10);
+        txtNombre = new JTextField(20);
+        txtFechaHora = new JTextField(20);
+        txtDescripcion = new JTextField(20);
+        txtArtistasDJ = new JTextField(20);
+        txtCapacidadMaxima = new JTextField(10);
+        txtPrecioEntrada = new JTextField(10);
+        txtEstado = new JTextField(20);
 
-        btnGuardar = new JButton("\uD83D\uDCBE Guardar");  // Emoji para el icono de disco
-        btnCerrar = new JButton("\uD83D\uDD34 Cerrar");    // Emoji para el icono de cerrar
+        btnGuardar = new JButton("Guardar");
+        btnCerrar = new JButton("Cerrar");
 
         // Estilo de los botones
         btnGuardar.setBackground(new Color(36, 138, 61)); // Verde
@@ -45,15 +50,23 @@ public class Proveedores extends JFrame implements ActionListener {
         btnCerrar.addActionListener(this);
 
         // Configurar el diseño de la interfaz
-        setLayout(new GridLayout(5, 2));
-        add(createLabel("\uD83D\uDC64 ID_proveedor:"));
-        add(txtIdProveedor);
-        add(createLabel("\uD83D\uDC65 Nombre_proveedor:"));
-        add(txtNombreProveedor);
-        add(createLabel("\uD83D\uDCC2 Direccion:"));
-        add(txtDireccion);
-        add(createLabel("\uD83D\uDCDE Numero_telefono_contacto:"));
-        add(txtNumTelefonoContacto);
+        setLayout(new GridLayout(9, 2));
+        add(createLabel("\uD83C\uDFB6 ID_evento:"));
+        add(txtId);
+        add(createLabel("\uD83D\uDCDD Nombre_evento:"));
+        add(txtNombre);
+        add(createLabel("\uD83D\uDD56 Fecha_hora_evento (AAAA-MM-DD HH:MM:SS):"));
+        add(txtFechaHora);
+        add(createLabel("\uD83D\uDCDD Descripcion_evento:"));
+        add(txtDescripcion);
+        add(createLabel("\uD83D\uDD0E Artistas_DJ_invitados:"));
+        add(txtArtistasDJ);
+        add(createLabel("\uD83D\uDCB0 Capacidad_maxima_evento:"));
+        add(txtCapacidadMaxima);
+        add(createLabel("\uD83D\uDCB5 Precio_entrada:"));
+        add(txtPrecioEntrada);
+        add(createLabel("\uD83D\uDD0E Estado_evento:"));
+        add(txtEstado);
         add(btnGuardar);
         add(btnCerrar);
     }
@@ -61,13 +74,13 @@ public class Proveedores extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btnGuardar) {
-            guardarProveedor();
+            guardarEvento();
         } else if (e.getSource() == btnCerrar) {
             cerrarVentana();
         }
     }
 
-    private void guardarProveedor() {
+    private void guardarEvento() {
         String jdbcUrl = "jdbc:mysql://localhost:3306/bd_discoteca";
         String usuario = "root";
         String contraseña = "";
@@ -76,21 +89,25 @@ public class Proveedores extends JFrame implements ActionListener {
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection conexion = DriverManager.getConnection(jdbcUrl, usuario, contraseña);
 
-            String consulta = "INSERT INTO Proveedores (ID_proveedor, Nombre_proveedor, Direccion, Numero_telefono_contacto) " +
-                    "VALUES (?, ?, ?, ?)";
+            String consulta = "INSERT INTO Eventos (ID_evento, Nombre_evento, Fecha_hora_evento, Descripcion_evento, Artistas_DJ_invitados, Capacidad_maxima_evento, Precio_entrada, Estado_evento) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
             PreparedStatement statement = conexion.prepareStatement(consulta);
-            statement.setInt(1, Integer.parseInt(txtIdProveedor.getText()));
-            statement.setString(2, txtNombreProveedor.getText());
-            statement.setString(3, txtDireccion.getText());
-            statement.setString(4, txtNumTelefonoContacto.getText());
+            statement.setInt(1, Integer.parseInt(txtId.getText()));
+            statement.setString(2, txtNombre.getText());
+            statement.setString(3, txtFechaHora.getText());
+            statement.setString(4, txtDescripcion.getText());
+            statement.setString(5, txtArtistasDJ.getText());
+            statement.setInt(6, Integer.parseInt(txtCapacidadMaxima.getText()));
+            statement.setBigDecimal(7, new java.math.BigDecimal(txtPrecioEntrada.getText()));
+            statement.setString(8, txtEstado.getText());
 
             int filasAfectadas = statement.executeUpdate();
 
             if (filasAfectadas > 0) {
                 JOptionPane.showMessageDialog(this, "Inserción exitosa");
             } else {
-                JOptionPane.showMessageDialog(this, "No se pudo insertar el proveedor");
+                JOptionPane.showMessageDialog(this, "No se pudo insertar el evento");
             }
 
             statement.close();
@@ -102,7 +119,7 @@ public class Proveedores extends JFrame implements ActionListener {
     }
 
     private void cerrarVentana() {
-        // Cierra la interfaz actual (Proveedores)
+        // Cierra la interfaz actual (Evento)
         this.dispose();
     }
 
@@ -124,8 +141,8 @@ public class Proveedores extends JFrame implements ActionListener {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            Proveedores interfazProveedores = new Proveedores();
-            interfazProveedores.setVisible(true);
+            Evento interfazEvento = new Evento();
+            interfazEvento.setVisible(true);
         });
     }
 }

@@ -1,3 +1,4 @@
+package app;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -9,7 +10,8 @@ import java.sql.SQLException;
 
 public class Cliente extends JFrame implements ActionListener {
 
-    private JTextField txtId, txtNombre, txtNumIdentificacion, txtFechaNacimiento, txtGenero, txtDireccion, txtNumTelefono, txtCorreo;
+    private JTextField txtId, txtNombre, txtNumIdentificacion, txtFechaNacimiento, txtDireccion, txtNumTelefono, txtCorreo;
+    private JComboBox<String> cmbGenero; // Cambiado a JComboBox para el género
     private JButton btnGuardar, btnCerrar;
 
     public Cliente() {
@@ -22,15 +24,16 @@ public class Cliente extends JFrame implements ActionListener {
         // Configura el fondo con color #0CABA8
         getContentPane().setBackground(new Color(12, 171, 168));
 
-        // Crear componentes
+        // Crear componentes (campos de texto, JComboBox y botones)
         txtId = new JTextField(10);
         txtNombre = new JTextField(20);
         txtNumIdentificacion = new JTextField(15);
         txtFechaNacimiento = new JTextField(10);
-        txtGenero = new JTextField(1);
         txtDireccion = new JTextField(20);
         txtNumTelefono = new JTextField(15);
         txtCorreo = new JTextField(20);
+
+        cmbGenero = new JComboBox<>(new String[]{"Masculino", "Femenino"}); // JComboBox para el género
 
         btnGuardar = new JButton("\uD83D\uDCBE Guardar");  // Emoji para el icono de disco
         btnCerrar = new JButton("\uD83D\uDD34 Cerrar");    // Emoji para el icono de cerrar
@@ -59,7 +62,7 @@ public class Cliente extends JFrame implements ActionListener {
         add(createLabel("\uD83D\uDCC5 Fecha_nacimiento (AAAA-MM-DD):"));
         add(txtFechaNacimiento);
         add(createLabel("\uD83D\uDC66 Genero:"));
-        add(txtGenero);
+        add(cmbGenero); // Agregar JComboBox para el género
         add(createLabel("\uD83C\uDFE0 Direccion:"));
         add(txtDireccion);
         add(createLabel("\uD83D\uDCDE Numero_telefono:"));
@@ -79,57 +82,62 @@ public class Cliente extends JFrame implements ActionListener {
         }
     }
 
-    // Para guardar los atributos del cliente en la base de datos desde java
+    // Método para guardar los datos del cliente en la base de datos
     private void guardarCliente() {
         String jdbcUrl = "jdbc:mysql://localhost:3306/bd_discoteca";
         String usuario = "root";
         String contraseña = "";
 
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection conexion = DriverManager.getConnection(jdbcUrl, usuario, contraseña);
-
+        try (Connection conexion = DriverManager.getConnection(jdbcUrl, usuario, contraseña)) {
             String consulta = "INSERT INTO Clientes (ID_cliente, Nombre_cliente, Numero_identificacion, Fecha_nacimiento, Genero, Direccion, Numero_telefono, Correo_electronico) " +
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-            //atributos del cliente
-            PreparedStatement statement = conexion.prepareStatement(consulta);
-            statement.setInt(1, Integer.parseInt(txtId.getText()));
-            statement.setString(2, txtNombre.getText());
-            statement.setString(3, txtNumIdentificacion.getText());
-            statement.setDate(4, java.sql.Date.valueOf(txtFechaNacimiento.getText()));
-            statement.setString(5, txtGenero.getText());
-            statement.setString(6, txtDireccion.getText());
-            statement.setString(7, txtNumTelefono.getText());
-            statement.setString(8, txtCorreo.getText());
+            // Preparar la consulta con los datos del cliente
+            try (PreparedStatement statement = conexion.prepareStatement(consulta)) {
+                // Asignar valores a los parámetros de la consulta
+                statement.setInt(1, Integer.parseInt(txtId.getText()));
+                statement.setString(2, txtNombre.getText());
+                statement.setString(3, txtNumIdentificacion.getText());
+                statement.setDate(4, java.sql.Date.valueOf(txtFechaNacimiento.getText()));
+                statement.setString(5, cmbGenero.getSelectedItem().toString()); // Obtener el género seleccionado del JComboBox
+                statement.setString(6, txtDireccion.getText());
+                statement.setString(7, txtNumTelefono.getText());
+                statement.setString(8, txtCorreo.getText());
 
-            int filasAfectadas = statement.executeUpdate();
-            // logica para confirmar si fue exitosa o no la insercion
-            if (filasAfectadas > 0) {
-                JOptionPane.showMessageDialog(this, "Inserción exitosa");
-            } else {
-                JOptionPane.showMessageDialog(this, "No se pudo insertar el cliente");
+                // Ejecutar la consulta y obtener el número de filas afectadas
+                int filasAfectadas = statement.executeUpdate();
+
+                // Mostrar un mensaje dependiendo del resultado de la inserción
+                if (filasAfectadas > 0) {
+                    JOptionPane.showMessageDialog(this, "Inserción exitosa");
+                } else {
+                    JOptionPane.showMessageDialog(this, "No se pudo insertar el cliente");
+                }
             }
-
-            statement.close();
-            conexion.close();
-
-        } catch (ClassNotFoundException | SQLException ex) {
+        } catch (SQLException ex) {
+            // Manejar cualquier error de SQL mostrando el mensaje de la excepción
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error al insertar el cliente: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (NumberFormatException ex) {
+            // Manejar el caso en el que el ID del cliente no sea un número válido
+            JOptionPane.showMessageDialog(this, "ID_cliente debe ser un número entero", "Error", JOptionPane.ERROR_MESSAGE);
             ex.printStackTrace();
         }
     }
 
+    // Método para cerrar la ventana actual
     private void cerrarVentana() {
-        // Cierra la interfaz actual (Cliente)
-        this.dispose();
+        this.dispose(); // Cierra la interfaz actual (Cliente)
     }
 
+    // Método para crear una etiqueta con el texto especificado
     private JLabel createLabel(String text) {
         JLabel label = new JLabel(text);
         label.setForeground(Color.BLACK);
         return label;
     }
 
+    // Método para establecer la fuente para admitir emojis en la interfaz
     private static void setUIFont(Font font) {
         java.util.Enumeration<Object> keys = UIManager.getDefaults().keys();
         while (keys.hasMoreElements()) {

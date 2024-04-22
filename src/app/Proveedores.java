@@ -1,3 +1,4 @@
+package app;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -7,14 +8,14 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class Productos extends JFrame implements ActionListener {
+public class Proveedores extends JFrame implements ActionListener {
 
-    private JTextField txtIdProducto, txtNombreProducto, txtCategoriaProducto, txtPrecioUnitario;
+    private JTextField txtIdProveedor, txtNombreProveedor, txtDireccion, txtNumTelefonoContacto;
     private JButton btnGuardar, btnCerrar;
 
-    public Productos() {
+    public Proveedores() {
         // Configuración de la ventana
-        setTitle("\uD83C\uDF7E Productos");  // Emoji para el icono de productos
+        setTitle("\uD83D\uDC64 Proveedores");  // Emoji para el icono de proveedores
         setSize(600, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setIconImage(new ImageIcon("icono.png").getImage());  // Reemplaza "icono.png" con la ruta de tu ícono
@@ -23,10 +24,10 @@ public class Productos extends JFrame implements ActionListener {
         getContentPane().setBackground(new Color(12, 171, 168));
 
         // Crear componentes
-        txtIdProducto = new JTextField(10);
-        txtNombreProducto = new JTextField(20);
-        txtCategoriaProducto = new JTextField(20);
-        txtPrecioUnitario = new JTextField(10);
+        txtIdProveedor = new JTextField(10);
+        txtNombreProveedor = new JTextField(20);
+        txtDireccion = new JTextField(20);
+        txtNumTelefonoContacto = new JTextField(15);
 
         btnGuardar = new JButton("\uD83D\uDCBE Guardar");  // Emoji para el icono de disco
         btnCerrar = new JButton("\uD83D\uDD34 Cerrar");    // Emoji para el icono de cerrar
@@ -46,14 +47,14 @@ public class Productos extends JFrame implements ActionListener {
 
         // Configurar el diseño de la interfaz
         setLayout(new GridLayout(5, 2));
-        add(createLabel("\uD83C\uDF7E ID_producto:"));
-        add(txtIdProducto);
-        add(createLabel("\uD83D\uDCDD Nombre_producto:"));
-        add(txtNombreProducto);
-        add(createLabel("\uD83D\uDCB3 Categoria_producto:"));
-        add(txtCategoriaProducto);
-        add(createLabel("\uD83D\uDCB8 Precio_unitario:"));
-        add(txtPrecioUnitario);
+        add(createLabel("\uD83D\uDC64 ID_proveedor:"));
+        add(txtIdProveedor);
+        add(createLabel("\uD83D\uDC65 Nombre_proveedor:"));
+        add(txtNombreProveedor);
+        add(createLabel("\uD83D\uDCC2 Direccion:"));
+        add(txtDireccion);
+        add(createLabel("\uD83D\uDCDE Numero_telefono_contacto:"));
+        add(txtNumTelefonoContacto);
         add(btnGuardar);
         add(btnCerrar);
     }
@@ -61,13 +62,13 @@ public class Productos extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btnGuardar) {
-            guardarProducto();
+            guardarProveedor();
         } else if (e.getSource() == btnCerrar) {
             cerrarVentana();
         }
     }
 
-    private void guardarProducto() {
+    private void guardarProveedor() {
         String jdbcUrl = "jdbc:mysql://localhost:3306/bd_discoteca";
         String usuario = "root";
         String contraseña = "";
@@ -76,21 +77,21 @@ public class Productos extends JFrame implements ActionListener {
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection conexion = DriverManager.getConnection(jdbcUrl, usuario, contraseña);
 
-            String consulta = "INSERT INTO Productos (ID_producto, Nombre_producto, Categoria_producto, Precio_unitario) " +
+            String consulta = "INSERT INTO Proveedores (ID_proveedor, Nombre_proveedor, Direccion, Numero_telefono_contacto) " +
                     "VALUES (?, ?, ?, ?)";
 
             PreparedStatement statement = conexion.prepareStatement(consulta);
-            statement.setInt(1, Integer.parseInt(txtIdProducto.getText()));
-            statement.setString(2, txtNombreProducto.getText());
-            statement.setString(3, txtCategoriaProducto.getText());
-            statement.setBigDecimal(4, new java.math.BigDecimal(txtPrecioUnitario.getText()));
+            statement.setInt(1, Integer.parseInt(txtIdProveedor.getText()));
+            statement.setString(2, txtNombreProveedor.getText());
+            statement.setString(3, txtDireccion.getText());
+            statement.setString(4, txtNumTelefonoContacto.getText());
 
             int filasAfectadas = statement.executeUpdate();
 
             if (filasAfectadas > 0) {
                 JOptionPane.showMessageDialog(this, "Inserción exitosa");
             } else {
-                JOptionPane.showMessageDialog(this, "No se pudo insertar el producto");
+                JOptionPane.showMessageDialog(this, "No se pudo insertar el proveedor");
             }
 
             statement.close();
@@ -102,7 +103,7 @@ public class Productos extends JFrame implements ActionListener {
     }
 
     private void cerrarVentana() {
-        // Cierra la interfaz actual (Productos)
+        // Cierra la interfaz actual (Proveedores)
         this.dispose();
     }
 
@@ -124,8 +125,8 @@ public class Productos extends JFrame implements ActionListener {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            Productos interfazProductos = new Productos();
-            interfazProductos.setVisible(true);
+            Proveedores interfazProveedores = new Proveedores();
+            interfazProveedores.setVisible(true);
         });
     }
 }

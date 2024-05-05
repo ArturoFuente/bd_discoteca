@@ -1,4 +1,5 @@
 package app;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -8,23 +9,20 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import login.logueo;
+
 public class Empleado extends JFrame implements ActionListener {
 
     private JTextField txtId, txtNombre, txtCargo, txtFechaContratacion, txtNombreUsuario, txtContrasena;
-    private JButton btnGuardar, btnCerrar;
+    private JButton btnGuardar, btnCerrar, btnVolverALogin; // Agregamos el botón btnVolverALogin
 
     public Empleado() {
-        setTitle("\uD83D\uDCBC Empleado");
+        setTitle("Empleado");
         setSize(600, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        // Establece el icono de la aplicación (reemplaza "icono.png" con la ruta de tu ícono)
         setIconImage(new ImageIcon("icono.png").getImage());
-
-        // Configura el fondo con un color específico
         getContentPane().setBackground(new Color(12, 171, 168));
 
-        // Crear componentes
         txtId = new JTextField(10);
         txtNombre = new JTextField(20);
         txtCargo = new JTextField(15);
@@ -32,46 +30,48 @@ public class Empleado extends JFrame implements ActionListener {
         txtNombreUsuario = new JTextField(20);
         txtContrasena = new JTextField(20);
 
-        btnGuardar = new JButton("\uD83D\uDCBE Guardar");
-        btnCerrar = new JButton("\uD83D\uDD34 Cerrar");
+        btnGuardar = new JButton("Guardar");
+        btnCerrar = new JButton("Cerrar");
+        btnVolverALogin = new JButton("Volver al inicio de sesión"); // Creamos el botón
 
-        // Establece el color de fondo y el color de texto para los botones
         btnGuardar.setBackground(new Color(36, 138, 61));
         btnCerrar.setBackground(new Color(192, 57, 43));
         btnGuardar.setForeground(Color.WHITE);
         btnCerrar.setForeground(Color.WHITE);
 
-        // Configura la fuente para admitir emojis
         setUIFont(new Font("Segoe UI Emoji", Font.PLAIN, 14));
 
-        // Agregar oyentes de eventos a los botones
         btnGuardar.addActionListener(this);
         btnCerrar.addActionListener(this);
+        btnVolverALogin.addActionListener(this); // Agregamos el ActionListener al botón
 
-        // Configura el diseño de la interfaz
-        setLayout(new GridLayout(8, 2));
-        add(createLabel("\uD83D\uDD0E ID_empleado:"));
+        setLayout(new GridLayout(9, 2));
+        add(createLabel("ID_empleado:"));
         add(txtId);
-        add(createLabel("\uD83D\uDC64 Nombre_empleado:"));
+        add(createLabel("Nombre_empleado:"));
         add(txtNombre);
-        add(createLabel("\uD83D\uDCBC Cargo:"));
+        add(createLabel("Cargo:"));
         add(txtCargo);
-        add(createLabel("\uD83D\uDCC5 Fecha_contratacion (AAAA-MM-DD):"));
+        add(createLabel("Fecha_contratacion (AAAA-MM-DD):"));
         add(txtFechaContratacion);
-        add(createLabel("\uD83D\uDC68\u200D\uD83D\uDCBC Nombre_usuario:"));
+        add(createLabel("Nombre_usuario:"));
         add(txtNombreUsuario);
-        add(createLabel("\uD83D\uDD12 Contraseña:"));
+        add(createLabel("Contraseña:"));
         add(txtContrasena);
         add(btnGuardar);
         add(btnCerrar);
+        add(btnVolverALogin); // Agregamos el botón a la ventana
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == btnGuardar) {
+        Object source = e.getSource();
+        if (source == btnGuardar) {
             guardarEmpleado();
-        } else if (e.getSource() == btnCerrar) {
+        } else if (source == btnCerrar) {
             cerrarVentana();
+        } else if (source == btnVolverALogin) { // Manejamos el evento del botón de volver al inicio de sesión
+            volverALogin();
         }
     }
 
@@ -115,8 +115,14 @@ public class Empleado extends JFrame implements ActionListener {
     }
 
     private void cerrarVentana() {
-        // Cierra la interfaz actual (Empleado)
         this.dispose();
+    }
+
+    private void volverALogin() {
+        // Volvemos al inicio de sesión (logueo)
+        logueo login = new logueo();
+        login.setVisible(true);
+        dispose();
     }
 
     private JLabel createLabel(String text) {

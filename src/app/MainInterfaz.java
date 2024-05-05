@@ -15,20 +15,22 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+
 public class MainInterfaz extends JFrame implements ActionListener {
 
     private JButton btnClientes, btnEmpleados, btnEventos, btnControlAsistencia, btnVentas, btnProductos, btnProveedores, btnInventario, btnConsultaClientes, btnConsultaProductos, btnConsultaEventos, btnListaProductos;
+    private JLabel lblUsuario; // JLabel para mostrar el nombre de usuario
 
     public MainInterfaz() {
-        // Configuración de la ventana principal
-        setTitle("Discoteca"); // Título de la ventana
-        setSize(800, 600); // Tamaño de la ventana
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Cierra la aplicación al cerrar la ventana
+         // Configuración de la ventana principal
+         setTitle("Discoteca"); // Título de la ventana
+         setSize(800, 600); // Tamaño de la ventana
+         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Cierra la aplicación al cerrar la ventana
 
-        // Configuración del fondo con color
-        getContentPane().setBackground(new Color(12, 171, 168));  // Color verde azulado
+         // Configuración del fondo con color
+         getContentPane().setBackground(new Color(12, 171, 168));  // Color verde azulado
 
-        // Crear componentes
+         // Crear componentes
         btnClientes = createButton("Clientes", "👤");
         btnEmpleados = createButton("Empleados", "💼");
         btnEventos = createButton("Eventos", "🎉");
@@ -42,7 +44,7 @@ public class MainInterfaz extends JFrame implements ActionListener {
         btnConsultaEventos = createButton("Consulta de Eventos", "🔍");
         btnListaProductos = createButton("Lista de Productos", "📋");
 
-        // Agregar oyentes de eventos a los botones
+         // Agregar oyentes de eventos a los botones
         btnClientes.addActionListener(this);
         btnConsultaClientes.addActionListener(this);
         btnEmpleados.addActionListener(this);
@@ -56,15 +58,15 @@ public class MainInterfaz extends JFrame implements ActionListener {
         btnConsultaEventos.addActionListener(this);
         btnListaProductos.addActionListener(this);
 
-        // Configurar el diseño de la interfaz principal con BorderLayout
+         // Configurar el diseño de la interfaz principal con BorderLayout
         setLayout(new BorderLayout());
 
-        // Crear un panel para los botones
+         // Crear un panel para los botones
         JPanel buttonsPanel = new JPanel();
         buttonsPanel.setLayout(new GridLayout(12, 1));
         buttonsPanel.setBackground(new Color(12, 171, 168));
 
-        // Agregar los botones al panel
+         // Agregar los botones al panel
         buttonsPanel.add(btnClientes);
         buttonsPanel.add(btnEmpleados);
         buttonsPanel.add(btnEventos);
@@ -78,17 +80,22 @@ public class MainInterfaz extends JFrame implements ActionListener {
         buttonsPanel.add(btnConsultaEventos);
         buttonsPanel.add(btnListaProductos);
 
-        // Agregar el panel de botones al oeste de la ventana
+         // Agregar el panel de botones al oeste de la ventana
         add(buttonsPanel, BorderLayout.WEST);
 
-        // Agregar una etiqueta con el título al sur de la ventana
-        JLabel titleLabel = new JLabel("🎉 ¡DISCOTECA :D! 🎉");
-        titleLabel.setFont(new Font("Arial Unicode MS", Font.BOLD, 34));
+         // Agregar una etiqueta con el título al sur de la ventana
+        JLabel titleLabel = new JLabel("🎉¡BIENVENIDO AL CONTROL DE LA DISCOTECA!🎉");
+        titleLabel.setFont(new Font("Arial Unicode MS", Font.BOLD, 30));
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         titleLabel.setForeground(Color.MAGENTA);
-        add(titleLabel, BorderLayout.NORTH);
-        }
+        add(titleLabel, BorderLayout.PAGE_START);
 
+        // Crear JLabel para mostrar el nombre de usuario
+        lblUsuario = new JLabel("<html> &#128100; Usuario : <html>", SwingConstants.RIGHT);
+        lblUsuario.setFont(new Font("Arial", Font.PLAIN, 16));
+        lblUsuario.setForeground(Color.BLACK);
+        add(lblUsuario, BorderLayout.PAGE_END); // Agregar en la esquina superior derecha
+    }
 
     private JButton createButton(String text, String emoji) {
         JButton button = new JButton(text + " " + emoji);
@@ -102,7 +109,7 @@ public class MainInterfaz extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
-        //logica para abrir a las respectivas tablas y consultas
+         //logica para abrir a las respectivas tablas y consultas
         if (source == btnClientes) {
             Cliente clientesFrame = new Cliente();
             clientesFrame.setVisible(true);
@@ -140,6 +147,11 @@ public class MainInterfaz extends JFrame implements ActionListener {
             ListaProductos listaProductosFrame = new ListaProductos();
             listaProductosFrame.setVisible(true);
         }
+    }
+
+     // Método para establecer el nombre de usuario en la esquina superior derecha
+    public void setUsuario(String nombreUsuario) {
+        lblUsuario.setText("Empleado: " + nombreUsuario);
     }
 
     public static void main(String[] args) {

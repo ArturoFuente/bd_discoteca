@@ -18,13 +18,13 @@ import java.awt.event.ActionListener;
 
 public class MainInterfaz extends JFrame implements ActionListener {
 
-    private JButton btnClientes, btnEmpleados, btnEventos, btnControlAsistencia, btnVentas, btnProductos, btnProveedores, btnInventario, btnConsultaClientes, btnConsultaProductos, btnConsultaEventos, btnListaProductos;
+    private JButton btnClientes, btnEmpleados, btnEventos, btnControlAsistencia, btnVentas, btnProductos, btnProveedores, btnInventario, btnConsultaClientes, btnConsultaProductos, btnConsultaEventos, btnConsultaEmpleado, btnListaProductos;
     private JLabel lblUsuario; // JLabel para mostrar el nombre de usuario
 
     public MainInterfaz() {
          // Configuración de la ventana principal
          setTitle("Discoteca"); // Título de la ventana
-         setSize(800, 600); // Tamaño de la ventana
+         setSize(800, 750); // Tamaño de la ventana
          setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Cierra la aplicación al cerrar la ventana
 
          // Configuración del fondo con color
@@ -42,6 +42,7 @@ public class MainInterfaz extends JFrame implements ActionListener {
         btnConsultaClientes = createButton("Consulta de Clientes", "🔍");
         btnConsultaProductos = createButton("Consulta de Productos", "🔍");
         btnConsultaEventos = createButton("Consulta de Eventos", "🔍");
+        btnConsultaEmpleado = createButton("Consulta de Empleados ","👤");
         btnListaProductos = createButton("Lista de Productos", "📋");
 
          // Agregar oyentes de eventos a los botones
@@ -56,6 +57,7 @@ public class MainInterfaz extends JFrame implements ActionListener {
         btnInventario.addActionListener(this);
         btnConsultaProductos.addActionListener(this);
         btnConsultaEventos.addActionListener(this);
+        btnConsultaEmpleado.addActionListener(this);
         btnListaProductos.addActionListener(this);
 
          // Configurar el diseño de la interfaz principal con BorderLayout
@@ -78,10 +80,11 @@ public class MainInterfaz extends JFrame implements ActionListener {
         buttonsPanel.add(btnConsultaClientes);
         buttonsPanel.add(btnConsultaProductos);
         buttonsPanel.add(btnConsultaEventos);
+        buttonsPanel.add(btnConsultaEmpleado);
         buttonsPanel.add(btnListaProductos);
 
          // Agregar el panel de botones al oeste de la ventana
-        add(buttonsPanel, BorderLayout.WEST);
+        add(buttonsPanel, BorderLayout.EAST);
 
          // Agregar una etiqueta con el título al sur de la ventana
         JLabel titleLabel = new JLabel("🎉¡BIENVENIDO AL CONTROL DE LA DISCOTECA!🎉");
@@ -146,6 +149,9 @@ public class MainInterfaz extends JFrame implements ActionListener {
         } else if (source == btnListaProductos) {
             ListaProductos listaProductosFrame = new ListaProductos();
             listaProductosFrame.setVisible(true);
+        } else if (source == btnConsultaEmpleado){
+            ConsultaEmpleado ConsultaEmpleadoFrame = new ConsultaEmpleado();
+            ConsultaEmpleadoFrame.setVisible(true);
         }
     }
 
